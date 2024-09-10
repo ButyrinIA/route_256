@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package delivery;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service DeliveryService {
+  rpc ReceiveOrder(ReceiveOrderRequest) returns (ReceiveOrderResponse);
+  rpc ReturnOrder(ReturnOrderRequest) returns (ReturnOrderResponse);
+  rpc IssueOrder(IssueOrderRequest) returns (IssueOrderResponse);
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+  rpc AcceptReturn(AcceptReturnRequest) returns (AcceptReturnResponse);
+  rpc ListReturns(ListReturnsRequest) returns (ListReturnsResponse);
+}
+
+message ReceiveOrderRequest {
+  int64 order_id = 1;
+  int64 recipient_id = 2;
+}
+
+message ReceiveOrderResponse {
+  bool success = 1;
+}
+
+message ReturnOrderRequest {
+  int64 order_id = 1;
+}
+
+message ReturnOrderResponse {
+  bool success = 1;
+}
+
+message IssueOrderRequest {
+  repeated int64 order_ids = 1;
+}
+
+message IssueOrderResponse {
+  bool success = 1;
+}
+
+message ListOrdersRequest {
+  int64 recipient_id = 1;
+  int32 limit = 2; // Optional parameter for number of orders
+  bool only_pvz = 3; // Optional parameter for orders at the warehouse
+}
+
+message ListOrdersResponse {
+  repeated Order orders = 1;
+}
+
+message AcceptReturnRequest {
+  int64 recipient_id = 1;
+  int64 order_id = 2;
+}
+
+message AcceptReturnResponse {
+  bool success = 1;
+}
+
+message ListReturnsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListReturnsResponse {
+  repeated Order returns = 1;
+}
+
+message Order {
+  int64 order_id = 1;
+  int64 recipient_id = 2;
+  google.protobuf.Timestamp expiration_date = 3;
+  google.protobuf.Timestamp issue_date = 4;
+}
